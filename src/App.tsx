@@ -1,34 +1,114 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+/** @format */
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { useMemo } from 'react';
+import { Container } from 'react-bootstrap';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { useLocalStorage } from './hooks/useLocalStorage';
+import { v4 as uuidV4 } from 'uuid';
+
+import {
+	QuestionData,
+	RawQuestion,
+	SimplifiedQuestion,
+} from './models/Question';
+import { Tag } from './models/Tag';
+import { NewQuestion } from './page-components/NewQuestion';
+import { QuestionList } from './components/QuestionList';
+import { QuestionLayout } from './components/QuestionLayout';
+import { Question } from './components/Question';
+import { EditQuestion } from './page-components/EditQuestion';
 
 function App() {
-  const [count, setCount] = useState(0)
+	const [questions, setQuestions] = useLocalStorage<RawQuestion[]>(
+		'QUESTIONS',
+		[]
+	);
 
-  return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+	const [tags, setTags] = useLocalStorage<Tag[]>('TAGS', []);
+
+	const questionsWithTags = useMemo(() => {
+		return questions.map((question) => {
+			return {
+				...question,
+				tags: tags.filter((tag) => {
+					question.tagIds.includes(tag.id);
+				}),
+			};
+		});
+	}, [questions]);
+
+	function onCreateQuestion({ tags, ...data }: QuestionData) {
+		setQuestions((prevQuestions) => {
+			return [
+				...prevQuestions,
+				{ ...data, id: uuidV4(), tagIds: tags.map((tag) => tag.id) },
+			];
+		});
+	}
+
+	function onUpdateQuestion(id: string, { tags, ...data }: QuestionData) {
+		setQuestions((prevQuestions) => {
+			return prevQuestions.map((question) => {
+				if (question.id === id) {
+					return { ...data, id, tagIds: tags.map((tag) => tag.id) };
+				} else {
+					return question;
+				}
+			});
+		});
+	}
+
+	function onDeleteQuestion(id: string) {
+		setQuestions((prevQuestions) => {
+			return prevQuestions.filter((question) => question.id !== id);
+		});
+
+		function addTag(tag: Tag) {
+			setTags((prev) => [...prev, tag]);
+		}
+
+		return (
+			<Container className='my-'>
+				<Routes>
+					<Route
+						path='/'
+						element={
+							<QuestionList
+								questions={questionsWithTags}
+								availableTags={tags}
+							/>
+						}
+					/>
+					<Route
+						path='/new'
+						element={
+							<NewQuestion
+								onSubmit={onCreateQuestion}
+								onAddTag={addTag}
+								availableTags={tags}
+							/>
+						}
+					/>
+					<Route
+						path='/:id'
+						element={<QuestionLayout questions={questionsWithTags} />}>
+						<Route index element={<Question onDelete={onDeleteQuestion} />} />
+						<Route
+							path='edit'
+							element={
+								<EditQuestion
+									onSubmit={onUpdateQuestion}
+									onAddTag={addTag}
+									availableTags={tags}
+								/>
+							}
+						/>
+					</Route>
+					<Route path='*' element={<Navigate to='/' />} />
+				</Routes>
+			</Container>
+		);
+	}
 }
 
-export default App
+export default App;
