@@ -8,15 +8,24 @@ import ReactSelect from 'react-select';
 import { Tag } from '../models/Tag';
 import { SimplifiedQuestion } from '../models/Question';
 import { QuestionCard } from './QuestionCard';
+import { EditTagsModal } from './EditTagModal';
 
 type QuestionListProps = {
 	questions: SimplifiedQuestion[];
 	availableTags: Tag[];
+	updateTag: (id: string, label: string) => void;
+	deleteTag: (id: string) => void;
 };
 
-export function QuestionList({ questions, availableTags }: QuestionListProps) {
+export function QuestionList({
+	questions,
+	availableTags,
+	updateTag,
+	deleteTag,
+}: QuestionListProps) {
 	const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 	const [search, setSearch] = useState<string>('');
+	const [editTagsModalIsOpen, setEditTagsModalIsOpen] = useState(false);
 
 	const filteredQuestions = useMemo(() => {
 		return questions.filter((question) => {
@@ -43,7 +52,11 @@ export function QuestionList({ questions, availableTags }: QuestionListProps) {
 						<Link to='/new'>
 							<Button variant='primary'>Add</Button>
 						</Link>
-						<Button variant='outline-secondary'>Edit Tags</Button>
+						<Button
+							onClick={() => setEditTagsModalIsOpen(true)}
+							variant='outline-secondary'>
+							Edit Tags
+						</Button>
 					</Stack>
 				</Col>
 			</Row>
@@ -93,6 +106,13 @@ export function QuestionList({ questions, availableTags }: QuestionListProps) {
 					</Col>
 				))}
 			</Row>
+			<EditTagsModal
+				availableTags={availableTags}
+				show={editTagsModalIsOpen}
+				handleClose={() => setEditTagsModalIsOpen(false)}
+				onUpdateTag={updateTag}
+				onDeleteTag={deleteTag}
+			/>
 		</>
 	);
 }

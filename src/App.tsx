@@ -67,6 +67,18 @@ function App() {
 			setTags((prev) => [...prev, tag]);
 		}
 
+		function updateTag(id: string, label: string) {
+			setTags((prev) => {
+				return prev.map((tag) => (tag.id === id ? { ...tag, label } : tag));
+			});
+		}
+
+		function deleteTag(id: string) {
+			setTags((prev) => {
+				return prev.filter((tag) => tag.id !== id);
+			});
+		}
+
 		return (
 			<Container className='my-'>
 				<Routes>
@@ -76,6 +88,8 @@ function App() {
 							<QuestionList
 								questions={questionsWithTags}
 								availableTags={tags}
+								updateTag={updateTag}
+								deleteTag={deleteTag}
 							/>
 						}
 					/>
