@@ -1,6 +1,6 @@
 /** @format */
 
-import { useRef, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { Button, Col, Form, Row, Stack } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import CreatableReactSelect from 'react-select/creatable';
@@ -28,24 +28,30 @@ export function QuestionForm({
 	const [selectedTags, setSelectedTags] = useState<Tag[]>(tags);
 	const navigate = useNavigate();
 
-	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+	function handleSubmit(event: FormEvent) {
 		event.preventDefault();
 
 		onSubmit({
 			question: questionRef.current!.value,
 			answer: answerRef.current!.value,
-			tags: [],
+			tags: selectedTags,
 		});
+
 		navigate('..');
 	}
+
 	return (
-		<Form>
+		<Form onSubmit={handleSubmit}>
 			<Stack gap={4}>
 				<Row>
 					<Col>
-						<Form.Group controlId='questionTitle'>
+						<Form.Group controlId='question'>
 							<Form.Label>Question:</Form.Label>
-							<Form.Control ref={questionRef} required />
+							<Form.Control
+								ref={questionRef}
+								required
+								defaultValue={question}
+							/>
 						</Form.Group>
 					</Col>
 					<Col>
@@ -77,7 +83,13 @@ export function QuestionForm({
 				</Row>
 				<Form.Group controlId='answer'>
 					<Form.Label>Answer:</Form.Label>
-					<Form.Control ref={answerRef} required as='textarea' rows={10} />
+					<Form.Control
+						defaultValue={answer}
+						required
+						ref={answerRef}
+						as='textarea'
+						rows={10}
+					/>
 				</Form.Group>
 			</Stack>
 			<Stack direction='horizontal' gap={2} className='justify-content-end'>

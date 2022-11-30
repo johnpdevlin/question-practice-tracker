@@ -30,12 +30,10 @@ function App() {
 		return questions.map((question) => {
 			return {
 				...question,
-				tags: tags.filter((tag) => {
-					question.tagIds.includes(tag.id);
-				}),
+				tags: tags.filter((tag) => question.tagIds.includes(tag.id)),
 			};
 		});
-	}, [questions]);
+	}, [questions, tags]);
 
 	function onCreateQuestion({ tags, ...data }: QuestionData) {
 		setQuestions((prevQuestions) => {
@@ -50,7 +48,7 @@ function App() {
 		setQuestions((prevQuestions) => {
 			return prevQuestions.map((question) => {
 				if (question.id === id) {
-					return { ...data, id, tagIds: tags.map((tag) => tag.id) };
+					return { ...question, ...data, tagIds: tags.map((tag) => tag.id) };
 				} else {
 					return question;
 				}
@@ -62,67 +60,72 @@ function App() {
 		setQuestions((prevQuestions) => {
 			return prevQuestions.filter((question) => question.id !== id);
 		});
+	}
+	function addTag(tag: Tag) {
+		setTags((prev) => [...prev, tag]);
+	}
 
-		function addTag(tag: Tag) {
-			setTags((prev) => [...prev, tag]);
-		}
-
-		function updateTag(id: string, label: string) {
-			setTags((prev) => {
-				return prev.map((tag) => (tag.id === id ? { ...tag, label } : tag));
+	function updateTag(id: string, label: string) {
+		setTags((prevTags) => {
+			return prevTags.map((tag) => {
+				if (tag.id === id) {
+					return { ...tag, label };
+				} else {
+					return tag;
+				}
 			});
-		}
+		});
+	}
 
-		function deleteTag(id: string) {
-			setTags((prev) => {
-				return prev.filter((tag) => tag.id !== id);
-			});
-		}
+	function deleteTag(id: string) {
+		setTags((prevTags) => {
+			return prevTags.filter((tag) => tag.id !== id);
+		});
+	}
 
-		return (
-			<Container className='my-'>
-				<Routes>
+	return (
+		<Container className='my-4'>
+			<Routes>
+				<Route
+					path='/'
+					element={
+						<QuestionList
+							questions={questionsWithTags}
+							availableTags={tags}
+							updateTag={updateTag}
+							deleteTag={deleteTag}
+						/>
+					}
+				/>
+				<Route
+					path='/new'
+					element={
+						<NewQuestion
+							onSubmit={onCreateQuestion}
+							onAddTag={addTag}
+							availableTags={tags}
+						/>
+					}
+				/>
+				<Route
+					path='/:id'
+					element={<QuestionLayout questions={questionsWithTags} />}>
+					<Route index element={<Question onDelete={onDeleteQuestion} />} />
 					<Route
-						path='/'
+						path='edit'
 						element={
-							<QuestionList
-								questions={questionsWithTags}
-								availableTags={tags}
-								updateTag={updateTag}
-								deleteTag={deleteTag}
-							/>
-						}
-					/>
-					<Route
-						path='/new'
-						element={
-							<NewQuestion
-								onSubmit={onCreateQuestion}
+							<EditQuestion
+								onSubmit={onUpdateQuestion}
 								onAddTag={addTag}
 								availableTags={tags}
 							/>
 						}
 					/>
-					<Route
-						path='/:id'
-						element={<QuestionLayout questions={questionsWithTags} />}>
-						<Route index element={<Question onDelete={onDeleteQuestion} />} />
-						<Route
-							path='edit'
-							element={
-								<EditQuestion
-									onSubmit={onUpdateQuestion}
-									onAddTag={addTag}
-									availableTags={tags}
-								/>
-							}
-						/>
-					</Route>
-					<Route path='*' element={<Navigate to='/' />} />
-				</Routes>
-			</Container>
-		);
-	}
+				</Route>
+				<Route path='*' element={<Navigate to='/' />} />
+			</Routes>
+		</Container>
+	);
 }
 
 export default App;
