@@ -26,6 +26,7 @@ export function QuestionForm({
 	const questionRef = useRef<HTMLInputElement>(null);
 	const answerRef = useRef<HTMLTextAreaElement>(null);
 	const [selectedTags, setSelectedTags] = useState<Tag[]>(tags);
+
 	const navigate = useNavigate();
 
 	function handleSubmit(event: FormEvent) {
