@@ -6,11 +6,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { v4 as uuidV4 } from 'uuid';
 
-import {
-	QuestionData,
-	RawQuestion,
-	SimplifiedQuestion,
-} from './models/Question';
+import { QuestionData, RawQuestion } from './models/Question';
 import { Tag } from './models/Tag';
 import { NewQuestion } from './page-components/NewQuestion';
 import { QuestionList } from './components/QuestionList';
