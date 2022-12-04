@@ -38,6 +38,7 @@ export function QuestionForm({
 			tags: selectedTags,
 		});
 
+		// navigates back after submitting
 		navigate('..');
 	}
 
