@@ -8,11 +8,11 @@ import { v4 as uuidV4 } from 'uuid';
 
 import { QuestionData, RawQuestion } from './models/Question';
 import { Tag } from './models/Tag';
-import { NewQuestion } from './page-components/NewQuestion';
-import { QuestionList } from './components/QuestionList';
 import { QuestionLayout } from './components/QuestionLayout';
+import { EditQuestion } from './components/Pages/EditQuestion';
+import { NewQuestion } from './components/Pages/NewQuestion';
 import { Question } from './components/Question';
-import { EditQuestion } from './page-components/EditQuestion';
+import { QuestionList } from './components/QuestionList';
 
 function App() {
 	const [questions, setQuestions] = useLocalStorage<RawQuestion[]>(
