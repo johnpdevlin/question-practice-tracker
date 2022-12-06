@@ -1,0 +1,14 @@
+Q+A EDITS
+
+MAIN UI
+- Click to show answer
+- Click to mark correct
+- Store result
+
+SIDEBAR (ONGOING)
+- Show Results
+    - Overall
+    - Period
+    - Tag
+
+

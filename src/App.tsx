@@ -8,11 +8,13 @@ import { v4 as uuidV4 } from 'uuid';
 
 import { QuestionData, RawQuestion } from './models/Question';
 import { Tag } from './models/Tag';
+import { Record } from './models/Record';
 import { QuestionLayout } from './components/QuestionLayout';
-import { EditQuestion } from './components/Pages/EditQuestion';
-import { NewQuestion } from './components/Pages/NewQuestion';
+import { EditQuestion } from './components/EditQuestion';
+import { NewQuestion } from './components/NewQuestion';
 import { Question } from './components/Question';
 import { QuestionList } from './components/QuestionList';
+import { SideBar } from './components/SideBar';
 
 function App() {
 	const [questions, setQuestions] = useLocalStorage<RawQuestion[]>(
@@ -79,47 +81,56 @@ function App() {
 		});
 	}
 
+	const [records, setRecords] = useLocalStorage<Record[]>('RECORDS', []);
+
 	return (
 		<Container className='my-4'>
-			<Routes>
-				<Route
-					path='/'
-					element={
-						<QuestionList
-							questions={questionsWithTags}
-							availableTags={tags}
-							updateTag={updateTag}
-							deleteTag={deleteTag}
+			<div className='row'>
+				<div className='col-md-9'>
+					<Routes>
+						<Route
+							path='/'
+							element={
+								<QuestionList
+									questions={questionsWithTags}
+									availableTags={tags}
+									updateTag={updateTag}
+									deleteTag={deleteTag}
+								/>
+							}
 						/>
-					}
-				/>
-				<Route
-					path='/new'
-					element={
-						<NewQuestion
-							onSubmit={onCreateQuestion}
-							onAddTag={addTag}
-							availableTags={tags}
+						<Route
+							path='/new'
+							element={
+								<NewQuestion
+									onSubmit={onCreateQuestion}
+									onAddTag={addTag}
+									availableTags={tags}
+								/>
+							}
 						/>
-					}
-				/>
-				<Route
-					path='/:id'
-					element={<QuestionLayout questions={questionsWithTags} />}>
-					<Route index element={<Question onDelete={onDeleteQuestion} />} />
-					<Route
-						path='edit'
-						element={
-							<EditQuestion
-								onSubmit={onUpdateQuestion}
-								onAddTag={addTag}
-								availableTags={tags}
+						<Route
+							path='/:id'
+							element={<QuestionLayout questions={questionsWithTags} />}>
+							<Route index element={<Question onDelete={onDeleteQuestion} />} />
+							<Route
+								path='edit'
+								element={
+									<EditQuestion
+										onSubmit={onUpdateQuestion}
+										onAddTag={addTag}
+										availableTags={tags}
+									/>
+								}
 							/>
-						}
-					/>
-				</Route>
-				<Route path='*' element={<Navigate to='/' />} />
-			</Routes>
+						</Route>
+						<Route path='*' element={<Navigate to='/' />} />
+					</Routes>
+				</div>
+				<div className='col-md-3'>
+					<SideBar records={records} availableTags={tags} />
+				</div>
+			</div>
 		</Container>
 	);
 }
