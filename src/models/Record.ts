@@ -1,10 +1,8 @@
 /** @format */
 
-export type Record = {
+export type RawRecord = {
 	id: string;
 	questionId: string;
-	tag: string;
-	tagId: string;
 	createdAt: Date;
 	isCorrect: boolean;
 };

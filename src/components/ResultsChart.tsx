@@ -4,7 +4,7 @@ import { Chart } from 'react-google-charts';
 import ReactSelect from 'react-select';
 import { useState, useMemo, useEffect } from 'react';
 
-import { Record } from '../models/Record';
+import { RawRecord } from '../models/Record';
 import { Tag } from '../models/Tag';
 
 const options = {
@@ -18,35 +18,14 @@ const options = {
 const chartKeys: string[] = ['Answered', 'Value'];
 
 type chartProps = {
-	records: Record[];
-	availableTags: Tag[];
+	records: RawRecord[];
+	answeredToday: RawRecord[];
 };
 
-export function ResultsChart({ records, availableTags }: chartProps) {
+export function ResultsChart({ records, answeredToday }: chartProps) {
 	const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 	const [isToday, setIsToday] = useState<Boolean>(false);
 	const [chartValues, setChartValues] = useState<(String | Number)[][]>([]);
-
-	const filteredByTag = useMemo(() => {
-		return records.filter((record) => {
-			return (
-				selectedTags.length === 0 ||
-				selectedTags.every((tag) =>
-					selectedTags.some((tag) => tag.id === tag.id)
-				)
-			);
-		});
-	}, [selectedTags, records]);
-
-	const filteredRecords = useMemo(() => {
-		if (isToday!) {
-			return filteredByTag.filter((record) => {
-				return record.createdAt === new Date(Date.now());
-			});
-		} else if (!isToday) {
-			return filteredByTag;
-		}
-	}, [isToday, filteredByTag]);
 
 	function onSwitchPeriod() {
 		if (isToday!) {
@@ -56,18 +35,23 @@ export function ResultsChart({ records, availableTags }: chartProps) {
 		}
 	}
 
-	useEffect(() => {
-		const correct: Number = filteredRecords!.filter((record) => {
-			return record.isCorrect === true;
-		}).length;
-		const incorrect: Number = filteredRecords!.filter((record) => {
-			return record.isCorrect === false;
-		}).length;
+	useMemo(() => {
+		let correct: Number = 0;
+		let incorrect: Number = 0;
+
+		if (isToday!) {
+			correct = answeredToday.filter((a) => a.isCorrect === true).length;
+			incorrect = answeredToday.filter((a) => a.isCorrect === false).length;
+		} else if (!isToday) {
+			correct = records.filter((r) => r.isCorrect === true).length;
+			incorrect = records.filter((r) => r.isCorrect === false).length;
+		}
+
 		setChartValues([
 			['Right', correct],
 			['Wrong', incorrect],
 		]);
-	}, [filteredRecords]);
+	}, [records, isToday]);
 
 	return (
 		<>
@@ -90,25 +74,6 @@ export function ResultsChart({ records, availableTags }: chartProps) {
 						options={options}
 					/>
 				</div>
-				<Form.Group controlId='tags' className='mx-3 mb-3'>
-					<ReactSelect
-						placeholder='Filter by tags...'
-						value={selectedTags.map((tag) => {
-							return { label: tag.label, value: tag.id };
-						})}
-						options={availableTags.map((tag) => {
-							return { label: tag.label, value: tag.id };
-						})}
-						onChange={(tags) => {
-							setSelectedTags(
-								tags.map((tag) => {
-									return { label: tag.label, id: tag.value };
-								})
-							);
-						}}
-						isMulti
-					/>
-				</Form.Group>
 			</div>
 		</>
 	);

@@ -1,19 +1,20 @@
 /** @format */
 
 import { ResultsChart } from './ResultsChart';
-import { Record } from '../models/Record';
-import { useState } from 'react';
+import { RawRecord } from '../models/Record';
+
 import { Tag } from '../models/Tag';
+import { Card, Button } from 'react-bootstrap';
 
 type sidebarProps = {
-	records: Record[];
-	availableTags: Tag[];
+	records: RawRecord[];
+	answeredToday: RawRecord[];
 };
 
-export function SideBar({ records, availableTags }: sidebarProps) {
+export function SideBar({ records, answeredToday }: sidebarProps) {
 	return (
 		<>
-			<ResultsChart records={records} availableTags={availableTags} />
+			<ResultsChart records={records} answeredToday={answeredToday} />
 		</>
 	);
 }

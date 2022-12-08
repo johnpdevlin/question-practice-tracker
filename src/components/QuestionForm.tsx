@@ -12,6 +12,7 @@ import { Tag } from '../models/Tag';
 type QuestionFormProps = {
 	onSubmit: (data: QuestionData) => void;
 	onAddTag: (tag: Tag) => void;
+	addMultiple: Boolean;
 	availableTags: Tag[];
 } & Partial<QuestionData>;
 
@@ -19,6 +20,7 @@ export function QuestionForm({
 	onSubmit,
 	onAddTag,
 	availableTags,
+	addMultiple,
 	question = '',
 	answer = '',
 	tags = [],
@@ -39,12 +41,20 @@ export function QuestionForm({
 		});
 
 		// navigates back after submitting
-		navigate('..');
+		if (!addMultiple) {
+			navigate('..');
+
+			// resets form after submitting
+		} else if (addMultiple!) {
+			questionRef.current!.value = '';
+			answerRef.current!.value = '';
+			setSelectedTags([]);
+		}
 	}
 
 	return (
 		<Form onSubmit={handleSubmit}>
-			<Stack gap={4}>
+			<Stack gap={4} className='mb-3'>
 				<Row>
 					<Col>
 						<Form.Group controlId='question'>
@@ -95,14 +105,14 @@ export function QuestionForm({
 				</Form.Group>
 			</Stack>
 			<Stack direction='horizontal' gap={2} className='justify-content-end'>
-				<Button variant='primary' type='submit'>
-					Save
-				</Button>
 				<Link to='..'>
 					<Button variant='outline-secondary' type='button'>
 						Cancel
 					</Button>
 				</Link>
+				<Button variant='primary' type='submit'>
+					Save
+				</Button>
 			</Stack>
 		</Form>
 	);

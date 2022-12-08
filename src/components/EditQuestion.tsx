@@ -1,5 +1,4 @@
 /** @format */
-
 import { QuestionForm } from './QuestionForm';
 import { useQuestion } from './QuestionLayout';
 import { QuestionData } from '../models/Question';
@@ -26,6 +25,7 @@ export function EditQuestion({
 				onSubmit={(data) => onSubmit(question.id, data)}
 				onAddTag={onAddTag}
 				availableTags={availableTags}
+				addMultiple={false}
 			/>
 		</>
 	);

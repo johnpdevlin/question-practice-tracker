@@ -8,7 +8,7 @@ import { v4 as uuidV4 } from 'uuid';
 
 import { QuestionData, RawQuestion } from './models/Question';
 import { Tag } from './models/Tag';
-import { Record } from './models/Record';
+import { RawRecord } from './models/Record';
 import { QuestionLayout } from './components/QuestionLayout';
 import { EditQuestion } from './components/EditQuestion';
 import { NewQuestion } from './components/NewQuestion';
@@ -21,8 +21,12 @@ function App() {
 		'QUESTIONS',
 		[]
 	);
-
+	const [records, setRecords] = useLocalStorage<RawRecord[]>('RECORDS', []);
 	const [tags, setTags] = useLocalStorage<Tag[]>('TAGS', []);
+	const [answeredToday, setAnsweredToday] = useLocalStorage<RawRecord[]>(
+		'ANSWERED TODAY',
+		[]
+	);
 
 	const questionsWithTags = useMemo(() => {
 		return questions.map((question) => {
@@ -54,9 +58,12 @@ function App() {
 		});
 	}
 
-	function onDeleteQuestion(id: string) {
+	function deleteQuestion(id: string) {
 		setQuestions((prevQuestions) => {
 			return prevQuestions.filter((question) => question.id !== id);
+		});
+		setRecords((prevRecords) => {
+			return prevRecords.filter((record) => record.questionId !== id);
 		});
 	}
 	function addTag(tag: Tag) {
@@ -81,7 +88,27 @@ function App() {
 		});
 	}
 
-	const [records, setRecords] = useLocalStorage<Record[]>('RECORDS', []);
+	const onAnswerQuestion = (isCorrect: boolean, id: string): void => {
+		const record: RawRecord = {
+			id: uuidV4(),
+			questionId: id,
+			createdAt: new Date(Date.now()),
+			isCorrect: isCorrect,
+		};
+
+		setRecords((prevRecords) => {
+			return [...prevRecords, record];
+		});
+
+		setAnsweredToday((prevAnsweredToday) => {
+			const prev = prevAnsweredToday.filter(
+				(p) =>
+					new Date(p.createdAt).toDateString() ===
+					new Date(Date.now()).toDateString()
+			);
+			return [...prev, record];
+		});
+	};
 
 	return (
 		<Container className='my-4'>
@@ -94,8 +121,11 @@ function App() {
 								<QuestionList
 									questions={questionsWithTags}
 									availableTags={tags}
+									answeredToday={answeredToday}
 									updateTag={updateTag}
 									deleteTag={deleteTag}
+									deleteQuestion={deleteQuestion}
+									onAnswerQuestion={onAnswerQuestion}
 								/>
 							}
 						/>
@@ -109,10 +139,11 @@ function App() {
 								/>
 							}
 						/>
+
 						<Route
 							path='/:id'
 							element={<QuestionLayout questions={questionsWithTags} />}>
-							<Route index element={<Question onDelete={onDeleteQuestion} />} />
+							<Route index element={<Question onDelete={deleteQuestion} />} />
 							<Route
 								path='edit'
 								element={
@@ -128,7 +159,7 @@ function App() {
 					</Routes>
 				</div>
 				<div className='col-md-3'>
-					<SideBar records={records} availableTags={tags} />
+					<SideBar records={records} answeredToday={answeredToday} />
 				</div>
 			</div>
 		</Container>

@@ -1,45 +1,77 @@
 /** @format */
 
 import { useMemo, useState } from 'react';
-import { Row, Col, Stack, Button, Form } from 'react-bootstrap';
+import { Row, Col, Stack, Button, Form, Accordion } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import ReactSelect from 'react-select';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 
 import { Tag } from '../models/Tag';
 import { SimplifiedQuestion } from '../models/Question';
 import { QuestionCard } from './QuestionCard';
 import { EditTagsModal } from './EditTagModal';
+import { RawRecord } from '../models/Record';
 
 type QuestionListProps = {
 	questions: SimplifiedQuestion[];
 	availableTags: Tag[];
+	answeredToday: RawRecord[];
 	updateTag: (id: string, label: string) => void;
 	deleteTag: (id: string) => void;
+	deleteQuestion: (id: string) => void;
+	onAnswerQuestion: (isCorrect: boolean, id: string) => void;
 };
 
 export function QuestionList({
 	questions,
 	availableTags,
+	answeredToday,
 	updateTag,
 	deleteTag,
+	deleteQuestion,
+	onAnswerQuestion,
 }: QuestionListProps) {
 	const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 	const [search, setSearch] = useState<string>('');
+	const [showAnswered, setShowAnswered] = useState<boolean>(false);
 	const [editTagsModalIsOpen, setEditTagsModalIsOpen] = useState(false);
+
+	const handleSwitch = (): void => {
+		if (showAnswered === true) {
+			setShowAnswered(false);
+		} else if (showAnswered === false) {
+			setShowAnswered(true);
+		}
+	};
 
 	const filteredQuestions = useMemo(() => {
 		return questions.filter((question) => {
-			return (
-				(search === '' ||
-					question.question.toLowerCase().includes(search.toLowerCase())) &&
-				// Checks if Question has all tages searched for
-				(selectedTags.length === 0 ||
-					selectedTags.every((tag) =>
-						selectedTags.some((QTag) => QTag.id === tag.id)
-					))
-			);
+			if (showAnswered === true) {
+				return (
+					(search === '' ||
+						question.question.toLowerCase().includes(search.toLowerCase())) &&
+					// Checks if Question has all tags searched for
+					(selectedTags.length === 0 ||
+						selectedTags.every((tag) =>
+							selectedTags.some((QTag) => QTag.id === tag.id)
+						))
+				);
+			} else if (showAnswered === false) {
+				return (
+					(search === '' ||
+						question.question.toLowerCase().includes(search.toLowerCase())) &&
+					// Filters out questions that have been answered today
+					answeredToday.every((at) => at.questionId !== question.id) &&
+					// Checks if Question has all tags searched for
+					(selectedTags.length === 0 ||
+						selectedTags.every((tag) =>
+							selectedTags.some((QTag) => QTag.id === tag.id)
+						))
+				);
+			}
 		});
-	}, [search, selectedTags, questions]);
+	}, [search, selectedTags, questions, answeredToday, showAnswered]);
 
 	return (
 		<>
@@ -93,19 +125,29 @@ export function QuestionList({
 							/>
 						</Form.Group>
 					</Col>
-				</Row>
-			</Form>
-			<Row xs={1} sm={2} md={3} lg={4} className='g-3'>
-				{filteredQuestions.map((question) => (
-					<Col key={question.id}>
-						<QuestionCard
-							id={question.id}
-							question={question.question}
-							tags={question.tags}
+					<Col>
+						<FormControlLabel
+							className='ms-4 mt-4'
+							control={<Switch onChange={handleSwitch} />}
+							label='Show Answered'
 						/>
 					</Col>
-				))}
+				</Row>
+			</Form>
+			<Row className=''>
+				<Accordion defaultActiveKey='0'>
+					{filteredQuestions.map((question, key) => (
+						<div key={key}>
+							<QuestionCard
+								onDelete={deleteQuestion}
+								q={question}
+								onAnswer={onAnswerQuestion}
+							/>
+						</div>
+					))}
+				</Accordion>
 			</Row>
+
 			<EditTagsModal
 				availableTags={availableTags}
 				show={editTagsModalIsOpen}

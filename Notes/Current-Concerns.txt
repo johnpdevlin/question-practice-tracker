@@ -5,7 +5,21 @@ MAIN UI
 - Click to mark correct
 - Store result
 
-SIDEBAR (ONGOING)
+    REMOVE
+        - Search
+        - ReducedCard
+
+Q-List
+- Filter
+    - Record 
+        - isCreatedAt === today
+
+Q-Card
+- Edit
+    - Conditional rendering for edit 
+    - UseState and useEffect (+useRef) 
+
+SIDEBAR (UP TO DATE)
 - Show Results
     - Overall
     - Period
