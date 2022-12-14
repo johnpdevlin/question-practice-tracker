@@ -1,8 +1,9 @@
 /** @format */
-import { QuestionForm } from './QuestionForm';
-import { useQuestion } from './QuestionLayout';
+
 import { QuestionData } from '../models/Question';
 import { Tag } from '../models/Tag';
+import { QuestionForm } from './QuestionForm';
+import { useQuestion } from './QuestionLayout';
 
 type EditQuestionProps = {
 	onSubmit: (id: string, data: QuestionData) => void;

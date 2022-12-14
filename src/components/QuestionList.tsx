@@ -8,13 +8,13 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 
 import { Tag } from '../models/Tag';
-import { SimplifiedQuestion } from '../models/Question';
-import { QuestionCard } from './QuestionCard';
-import { EditTagsModal } from './EditTagModal';
+import { Question } from '../models/Question';
 import { RawRecord } from '../models/Record';
+import { EditTagsModal } from './EditTagModal';
+import { QuestionCard } from './QuestionCard';
 
 type QuestionListProps = {
-	questions: SimplifiedQuestion[];
+	questions: Question[];
 	availableTags: Tag[];
 	answeredToday: RawRecord[];
 	updateTag: (id: string, label: string) => void;
@@ -46,7 +46,7 @@ export function QuestionList({
 	};
 
 	const filteredQuestions = useMemo(() => {
-		return questions.filter((question) => {
+		return questions.filter((question: Question) => {
 			if (showAnswered === true) {
 				return (
 					(search === '' ||

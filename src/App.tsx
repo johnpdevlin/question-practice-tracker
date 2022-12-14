@@ -3,18 +3,19 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useMemo } from 'react';
 import { Container } from 'react-bootstrap';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { useLocalStorage } from './hooks/useLocalStorage';
+
 import { v4 as uuidV4 } from 'uuid';
 
 import { QuestionData, RawQuestion } from './models/Question';
 import { Tag } from './models/Tag';
 import { RawRecord } from './models/Record';
-import { QuestionLayout } from './components/QuestionLayout';
-import { EditQuestion } from './components/EditQuestion';
-import { NewQuestion } from './components/NewQuestion';
-import { Question } from './components/Question';
-import { QuestionList } from './components/QuestionList';
-import { SideBar } from './components/SideBar';
+import { EditQuestion } from './Components/EditQuestion';
+import { NewQuestion } from './Components/NewQuestion';
+import { Question } from './Components/Question';
+import { QuestionList } from './Components/QuestionList';
+import { SideBar } from './Components/SideBar';
+import { useLocalStorage } from './Hooks/useLocalStorage';
+import { QuestionLayout } from './Components/QuestionLayout';
 
 function App() {
 	const [questions, setQuestions] = useLocalStorage<RawQuestion[]>(
@@ -29,7 +30,7 @@ function App() {
 	);
 
 	const questionsWithTags = useMemo(() => {
-		return questions.map((question) => {
+		return questions.map((question: RawQuestion) => {
 			return {
 				...question,
 				tags: tags.filter((tag) => question.tagIds.includes(tag.id)),
@@ -38,7 +39,7 @@ function App() {
 	}, [questions, tags]);
 
 	function onCreateQuestion({ tags, ...data }: QuestionData) {
-		setQuestions((prevQuestions) => {
+		setQuestions((prevQuestions: RawQuestion[]) => {
 			return [
 				...prevQuestions,
 				{ ...data, id: uuidV4(), tagIds: tags.map((tag) => tag.id) },
@@ -47,8 +48,8 @@ function App() {
 	}
 
 	function onUpdateQuestion(id: string, { tags, ...data }: QuestionData) {
-		setQuestions((prevQuestions) => {
-			return prevQuestions.map((question) => {
+		setQuestions((prevQuestions: RawQuestion[]) => {
+			return prevQuestions.map((question: RawQuestion) => {
 				if (question.id === id) {
 					return { ...question, ...data, tagIds: tags.map((tag) => tag.id) };
 				} else {
@@ -59,11 +60,15 @@ function App() {
 	}
 
 	function deleteQuestion(id: string) {
-		setQuestions((prevQuestions) => {
-			return prevQuestions.filter((question) => question.id !== id);
+		setQuestions((prevQuestions: RawQuestion[]) => {
+			return prevQuestions.filter(
+				(question: RawQuestion) => question.id !== id
+			);
 		});
-		setRecords((prevRecords) => {
-			return prevRecords.filter((record) => record.questionId !== id);
+		setRecords((prevRecords: RawRecord[]) => {
+			return prevRecords.filter(
+				(record: RawRecord) => record.questionId !== id
+			);
 		});
 	}
 	function addTag(tag: Tag) {
@@ -71,8 +76,8 @@ function App() {
 	}
 
 	function updateTag(id: string, label: string) {
-		setTags((prevTags) => {
-			return prevTags.map((tag) => {
+		setTags((prevTags: Tag[]) => {
+			return prevTags.map((tag: Tag) => {
 				if (tag.id === id) {
 					return { ...tag, label };
 				} else {
@@ -83,8 +88,8 @@ function App() {
 	}
 
 	function deleteTag(id: string) {
-		setTags((prevTags) => {
-			return prevTags.filter((tag) => tag.id !== id);
+		setTags((prevTags: Tag[]) => {
+			return prevTags.filter((tag: Tag) => tag.id !== id);
 		});
 	}
 
@@ -96,11 +101,11 @@ function App() {
 			isCorrect: isCorrect,
 		};
 
-		setRecords((prevRecords) => {
+		setRecords((prevRecords: RawRecord[]) => {
 			return [...prevRecords, record];
 		});
 
-		setAnsweredToday((prevAnsweredToday) => {
+		setAnsweredToday((prevAnsweredToday: RawRecord[]) => {
 			const prev = prevAnsweredToday.filter(
 				(p) =>
 					new Date(p.createdAt).toDateString() ===

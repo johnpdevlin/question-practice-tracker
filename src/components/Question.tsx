@@ -3,8 +3,9 @@
 import { toggleClass } from 'cheerio/lib/api/attributes';
 import { Badge, Button, Col, Row, Stack } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { useQuestion } from './QuestionLayout';
+
 import ReactMarkdown from 'react-markdown';
+import { useQuestion } from './QuestionLayout';
 
 type QuestionProps = {
 	onDelete: (id: string) => void;
