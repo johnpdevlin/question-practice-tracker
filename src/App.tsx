@@ -9,13 +9,13 @@ import { v4 as uuidV4 } from 'uuid';
 import { QuestionData, RawQuestion } from './models/Question';
 import { Tag } from './models/Tag';
 import { RawRecord } from './models/Record';
-import { EditQuestion } from './Components/EditQuestion';
-import { NewQuestion } from './Components/NewQuestion';
-import { Question } from './Components/Question';
-import { QuestionList } from './Components/QuestionList';
-import { SideBar } from './Components/SideBar';
-import { useLocalStorage } from './Hooks/useLocalStorage';
-import { QuestionLayout } from './Components/QuestionLayout';
+import { EditQuestion } from './components/EditQuestion';
+import { NewQuestion } from './components/NewQuestion';
+import { Question } from './components/Question';
+import { QuestionList } from './components/QuestionList';
+import { SideBar } from './components/SideBar';
+import { useLocalStorage } from './hooks/useLocalStorage';
+import { QuestionLayout } from './components/QuestionLayout';
 
 function App() {
 	const [questions, setQuestions] = useLocalStorage<RawQuestion[]>(

@@ -2,10 +2,10 @@
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 
-import { QuestionForm } from './QuestionForm';
 import { QuestionData } from '../models/Question';
 import { Tag } from '../models/Tag';
 import { useState } from 'react';
+import { QuestionForm } from './QuestionForm';
 
 type NewQuestionProps = {
 	onSubmit: (data: QuestionData) => void;

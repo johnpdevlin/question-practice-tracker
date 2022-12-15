@@ -10,8 +10,8 @@ import Switch from '@mui/material/Switch';
 import { Tag } from '../models/Tag';
 import { Question } from '../models/Question';
 import { RawRecord } from '../models/Record';
-import { EditTagsModal } from './EditTagModal';
 import { QuestionCard } from './QuestionCard';
+import { EditTagsModal } from './EditTagsModal';
 
 type QuestionListProps = {
 	questions: Question[];

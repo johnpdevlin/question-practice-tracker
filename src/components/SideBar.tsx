@@ -1,10 +1,7 @@
 /** @format */
 
-import { ResultsChart } from './ResultsChart';
 import { RawRecord } from '../models/Record';
-
-import { Tag } from '../models/Tag';
-import { Card, Button } from 'react-bootstrap';
+import { ResultsChart } from './ResultsChart';
 
 type sidebarProps = {
 	records: RawRecord[];
