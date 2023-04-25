@@ -1,22 +1,24 @@
-Question Practice Tracker
+# Question Practice Tracker
 
 Question Practice Tracker is a simple and efficient tool for tracking your progress in preparing for exams, interviews, or any other type of assessment. With this app, you can easily create question sets, categorize them by topic, and track your performance over time.
 
-Features
+## Features
 
-Create and edit question sets
-Categorize question sets by topic
+Create and edit questions
+Categorize question by tag
 Mark questions as correct or incorrect
-Track performance by topic
-Customizable and user-friendly interface
-Getting Started
+Track performance by current day or overall
+User-friendly interface
+
+## Getting Started
 
 To get started with Question Practice Tracker, simply clone this repository to your local machine and open the index.html file in your browser.
 
 bash
 Copy code
 git clone https://github.com/your-username/question-practice-tracker.git
-Usage
+
+## Usage
 
 To create a new question set, click the "New Set" button and enter the name and topic of your new set. To add questions to a set, click the "Add Question" button and enter the question and answer.
 
@@ -24,15 +26,15 @@ To practice with a set, click the "Practice" button and answer each question in 
 
 To edit or delete a question set, click the "Edit" button next to the set name. To edit or delete a question, click the "Edit" button next to the question.
 
-Contributing
+## Contributing
 
 Contributions to Question Practice Tracker are welcome! If you'd like to contribute, please fork this repository and submit a pull request.
 
-License
+## License
 
 This project is licensed under the MIT License. See the LICENSE.md file for details.
 
-Acknowledgments
+## Acknowledgments
 
 Bootstrap
 jQuery
