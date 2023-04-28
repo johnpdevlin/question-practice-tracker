@@ -37,5 +37,4 @@ This project is licensed under the MIT License. See the LICENSE.md file for deta
 ## Acknowledgments
 
 Bootstrap
-jQuery
 Font Awesome
